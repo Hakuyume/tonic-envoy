@@ -8,14 +8,21 @@ use std::path::PathBuf;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let out_dir = PathBuf::from(env::var("OUT_DIR")?);
 
+    #[cfg(feature = "pbjson")]
     let mut config = prost_build::Config::new();
+    #[cfg(not(feature = "pbjson"))]
+    let mut config = tonic_prost_build::Config::new();
     config
         .enable_type_names()
         .type_name_domain(["."], "type.googleapis.com");
-    tonic_prost_build::configure()
-        .bytes(".")
+    let builder = tonic_prost_build::configure();
+    #[cfg(feature = "bytes")]
+    let builder = builder.bytes(".");
+    #[cfg(feature = "pbjson")]
+    let builder = builder
         .compile_well_known_types(true)
-        .extern_path(".google.protobuf", "::pbjson_types")
+        .extern_path(".google.protobuf", "::pbjson_types");
+    builder
         .extern_path(".google.rpc", "::tonic_types")
         .file_descriptor_set_path(out_dir.join("envoy_descriptor.bin"))
         .compile_with_config(
@@ -23,7 +30,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &[
                 "submodules/envoy/api/envoy/config/cluster/v3/cluster.proto",
                 "submodules/envoy/api/envoy/config/route/v3/route.proto",
-                "submodules/envoy/api/envoy/extensions/upstreams/http/v3/http_protocol_options.proto",
+                concat!(
+                    "submodules/",
+                    "envoy/api/envoy/extensions/upstreams/http/v3/http_protocol_options.proto"
+                ),
                 "submodules/envoy/api/envoy/service/discovery/v3/ads.proto",
                 "submodules/envoy/api/envoy/service/ext_proc/v3/external_processor.proto",
             ],
@@ -35,6 +45,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             ],
         )?;
 
+    #[cfg(feature = "pbjson")]
     pbjson_build::Builder::new()
         .register_descriptors(&fs::read(out_dir.join("envoy_descriptor.bin"))?)?
         .build(&["."])?;
@@ -47,6 +58,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         {
             let mut split = stem.split('.');
             match split.next_back() {
+                #[cfg(feature = "pbjson")]
                 Some("serde") => {
                     split
                         .fold(&mut module, |module, ident| {
@@ -70,6 +82,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     module
         .modules
         .retain(|ident, _| ["envoy", "xds"].contains(&ident.as_str()));
+    #[cfg(feature = "pbjson")]
     if let Some(module) = module
         .modules
         .get_mut("envoy")
@@ -101,6 +114,7 @@ struct Module {
 
 #[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
 enum Include {
+    #[cfg(feature = "pbjson")]
     Pbjson(String),
     Tonic(String),
 }
@@ -109,6 +123,7 @@ impl quote::ToTokens for Module {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
         for include in &self.include {
             match include {
+                #[cfg(feature = "pbjson")]
                 Include::Pbjson(include) => {
                     let include = format!("/{include}.rs");
                     tokens.extend(quote::quote! {
