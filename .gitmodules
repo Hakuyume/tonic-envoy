@@ -1,0 +1,12 @@
+[submodule "github.com/bufbuild/protoc-gen-validate"]
+	path = submodules/protoc-gen-validate
+	url = https://github.com/bufbuild/protoc-gen-validate.git
+[submodule "github.com/cncf/xds"]
+	path = submodules/xds
+	url = https://github.com/cncf/xds.git
+[submodule "github.com/envoyproxy/envoy"]
+	path = submodules/envoy
+	url = https://github.com/envoyproxy/envoy.git
+[submodule "github.com/googleapis/api-common-protos"]
+	path = submodules/api-common-protos
+	url = https://github.com/googleapis/api-common-protos.git
