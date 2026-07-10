@@ -1,0 +1,21 @@
+[package]
+name = "tonic-envoy"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+pbjson = "0.9.0"
+pbjson-types = "0.9.0"
+prost = "0.14.3"
+prost-types = "0.14.3"
+serde = "1.0.228"
+tonic = "0.14.3"
+tonic-prost = "0.14.3"
+tonic-types = "0.14.3"
+
+[build-dependencies]
+pbjson-build = "0.9.0"
+proc-macro2 = "1.0.106"
+prost-build = "0.14.3"
+quote = "1.0.44"
+tonic-prost-build = "0.14.3"
