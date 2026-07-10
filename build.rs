@@ -28,8 +28,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "submodules/envoy/api/envoy/service/ext_proc/v3/external_processor.proto",
             ],
             &[
-                "submodules/api-common-protos",
                 "submodules/envoy/api",
+                "submodules/googleapis",
                 "submodules/protoc-gen-validate",
                 "submodules/xds",
             ],
