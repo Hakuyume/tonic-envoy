@@ -34,8 +34,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "submodules/",
                     "envoy/api/envoy/extensions/upstreams/http/v3/http_protocol_options.proto"
                 ),
+                "submodules/envoy/api/envoy/service/cluster/v3/cds.proto",
                 "submodules/envoy/api/envoy/service/discovery/v3/ads.proto",
+                "submodules/envoy/api/envoy/service/endpoint/v3/eds.proto",
                 "submodules/envoy/api/envoy/service/ext_proc/v3/external_processor.proto",
+                "submodules/envoy/api/envoy/service/listener/v3/lds.proto",
+                "submodules/envoy/api/envoy/service/route/v3/rds.proto",
             ],
             &[
                 "submodules/envoy/api",
